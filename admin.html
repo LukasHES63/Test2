@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration VroomIQ</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Import Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <!-- Import our script -->
+    <script src="script.js"></script>
+</head>
+<body>
+    <header class="admin-header">
+        <div class="admin-header-content">
+            <a href="index.html" class="back-to-home">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Retour à l'accueil
+            </a>
+            <h1>Administration VroomIQ</h1>
+        </div>
+    </header>
+
+    <div class="admin-container">
+        <h1>Administration VroomIQ</h1>
+        
+        <div class="admin-actions">
+            <button id="toggleFormBtn" class="action-button">Afficher le formulaire d'ajout</button>
+            <button onclick="loadVehicles()" class="action-button">Actualiser la liste</button>
+        </div>
+
+        <div id="vehicleForm" class="vehicle-form" style="display: none;">
+            <h2>Ajouter/Modifier un véhicule</h2>
+            <p class="form-help">Remplissez les champs ci-dessous pour ajouter ou modifier un véhicule. Les champs marqués d'un * sont obligatoires.</p>
+            
+            <div class="form-section">
+                <h3>Informations générales</h3>
+                <div class="form-group">
+                    <label for="vehicle-id-input">ID du véhicule *</label>
+                    <input type="text" id="vehicle-id-input" required>
+                    <span class="help-text">Identifiant unique du véhicule (ex: peugeot-308-1)</span>
+                </div>
+                <div class="form-group">
+                    <label for="vehicle-brand">Marque *</label>
+                    <input type="text" id="vehicle-brand" required>
+                </div>
+                <div class="form-group">
+                    <label for="vehicle-model">Modèle *</label>
+                    <input type="text" id="vehicle-model" required>
+                </div>
+                <div class="form-group">
+                    <label for="vehicle-generation">Génération *</label>
+                    <input type="text" id="vehicle-generation" required>
+                    <span class="help-text">Période de production (ex: 2013-2021)</span>
+                </div>
+                <div class="form-group">
+                    <label for="vehicle-phase">Phase</label>
+                    <input type="text" id="vehicle-phase">
+                    <span class="help-text">Version du modèle (ex: 2 pour une deuxième version)</span>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Motorisation</h3>
+                <div class="form-group">
+                    <label for="vehicle-fuel">Type de carburant</label>
+                    <select id="vehicle-fuel">
+                        <option value="">Sélectionner</option>
+                        <option value="essence">Essence</option>
+                        <option value="diesel">Diesel</option>
+                        <option value="hybride">Hybride</option>
+                        <option value="electrique">Électrique</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="vehicle-motor-code">Code moteur</label>
+                    <input type="text" id="vehicle-motor-code">
+                    <span class="help-text">Désignation du moteur (ex: 1.2 PureTech 130)</span>
+                </div>
+                <div class="form-group">
+                    <label for="vehicle-power">Puissance (ch)</label>
+                    <input type="number" id="vehicle-power">
+                </div>
+                <div class="form-group">
+                    <label for="vehicle-power-rpm">Régime de puissance (tr/min)</label>
+                    <input type="number" id="vehicle-power-rpm">
+                </div>
+                <div class="form-group">
+                    <label for="vehicle-torque">Couple (Nm)</label>
+                    <input type="number" id="vehicle-torque">
+                </div>
+                <div class="form-group">
+                    <label for="vehicle-torque-rpm">Régime de couple (tr/min)</label>
+                    <input type="number" id="vehicle-torque-rpm">
+                </div>
+                <div class="form-group">
+                    <label for="vehicle-engine-size">Cylindrée (cm³)</label>
+                    <input type="number" id="vehicle-engine-size">
+                </div>
+                <div class="form-group">
+                    <label for="vehicle-architecture">Architecture</label>
+                    <input type="text" id="vehicle-architecture">
+                    <span class="help-text">Configuration du moteur (ex: 3-cylindres)</span>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Boîte de vitesses</h3>
+                <div class="form-group">
+                    <label for="vehicle-gearbox-type">Type</label>
+                    <select id="vehicle-gearbox-type">
+                        <option value="">Sélectionner</option>
+                        <option value="manuelle">Manuelle</option>
+                        <option value="automatique">Automatique</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="vehicle-gear-count">Nombre de rapports</label>
+                    <input type="number" id="vehicle-gear-count">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Performances</h3>
+                <div class="form-group">
+                    <label for="vehicle-vmax">Vitesse max (km/h)</label>
+                    <input type="number" id="vehicle-vmax">
+                </div>
+                <div class="form-group">
+                    <label for="vehicle-acceleration">0-100 km/h (s)</label>
+                    <input type="number" step="0.1" id="vehicle-acceleration">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Consommation (L/100km)</h3>
+                <div class="form-group">
+                    <label for="vehicle-consumption-mixed">Mixte</label>
+                    <input type="number" step="0.1" id="vehicle-consumption-mixed">
+                </div>
+                <div class="form-group">
+                    <label for="vehicle-consumption-city">Urbaine</label>
+                    <input type="number" step="0.1" id="vehicle-consumption-city">
+                </div>
+                <div class="form-group">
+                    <label for="vehicle-consumption-highway">Autoroute</label>
+                    <input type="number" step="0.1" id="vehicle-consumption-highway">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Émissions</h3>
+                <div class="form-group">
+                    <label for="vehicle-co2">CO2 (g/km)</label>
+                    <input type="number" id="vehicle-co2">
+                </div>
+                <div class="form-group">
+                    <label for="vehicle-euro-norm">Norme Euro</label>
+                    <select id="vehicle-euro-norm">
+                        <option value="">Sélectionner</option>
+                        <option value="Euro 1">Euro 1</option>
+                        <option value="Euro 2">Euro 2</option>
+                        <option value="Euro 3">Euro 3</option>
+                        <option value="Euro 4">Euro 4</option>
+                        <option value="Euro 5">Euro 5</option>
+                        <option value="Euro 6">Euro 6</option>
+                        <option value="Euro 6d">Euro 6d</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="vehicle-critair">Vignette Crit'Air</label>
+                    <select id="vehicle-critair">
+                        <option value="">Sélectionner</option>
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Lien</h3>
+                <div class="form-group">
+                    <label for="vehicle-url">URL du véhicule</label>
+                    <input type="url" id="vehicle-url">
+                    <span class="help-text">Lien vers la fiche technique du constructeur</span>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button onclick="saveVehicle()" class="save-button">Enregistrer</button>
+                <button onclick="clearForm()" class="clear-button">Effacer</button>
+            </div>
+        </div>
+
+        <div class="import-section">
+            <h2>Import de véhicules</h2>
+            <p class="form-help">Vous pouvez importer plusieurs véhicules à la fois en utilisant un ou plusieurs fichiers JSON ou en collant directement le contenu JSON.</p>
+            
+            <div class="template-buttons">
+                <button onclick="downloadEmptyTemplate()" class="template-button">Télécharger le modèle vide</button>
+                <button onclick="downloadExampleTemplate()" class="template-button">Télécharger un exemple</button>
+            </div>
+
+            <div class="form-group">
+                <label for="json-files">Importer depuis un ou plusieurs fichiers JSON</label>
+                <input type="file" id="json-files" accept=".json" multiple>
+                <button onclick="importVehiclesFromJsonFiles()" class="import-button">Importer les fichiers</button>
+            </div>
+
+            <div class="form-group">
+                <label for="json-content">Ou coller le contenu JSON ici</label>
+                <textarea id="json-content" rows="10"></textarea>
+                <button onclick="importVehiclesFromText()" class="import-button">Importer le texte</button>
+            </div>
+
+            <div id="import-progress" class="import-progress" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="progress-text">Import en cours...</div>
+            </div>
+        </div>
+
+        <div id="vehicles-list" class="vehicles-list">
+            <h2>Liste des véhicules</h2>
+            <p class="form-help">Cliquez sur un véhicule pour le modifier ou le supprimer.</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 VroomIQ - Administration</p>
+    </footer>
+
+    <script>
+        document.getElementById('toggleFormBtn').addEventListener('click', function() {
+            const form = document.getElementById('vehicleForm');
+            const button = this;
+            if (form.style.display === 'none') {
+                form.style.display = 'block';
+                button.textContent = 'Masquer le formulaire';
+            } else {
+                form.style.display = 'none';
+                button.textContent = 'Afficher le formulaire';
+            }
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VroomIQ - Comparateur de Véhicules</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Import Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <!-- Import our script -->
+    <script src="script.js"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">VroomIQ</div>
+            <div class="nav-links">
+                <a href="admin.html" class="nav-link admin-button">Espace Administrateur</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1>Bienvenue sur VroomIQ</h1>
+            <p>Comparez facilement les caractéristiques de nos véhicules familiaux pour faire le meilleur choix.</p>
+        </section>
+
+        <section class="selection-container">
+            <h2>Sélectionnez deux véhicules à comparer</h2>
+            
+            <div class="vehicle-selectors">
+                <div class="vehicle-selector">
+                    <h3>Premier véhicule</h3>
+                    <select id="vehicle1" class="vehicle-select">
+                        <option value="">Choisissez un véhicule</option>
+                    </select>
+                    <div id="vehicle1-details" class="vehicle-details"></div>
+                </div>
+
+                <div class="vehicle-selector">
+                    <h3>Second véhicule</h3>
+                    <select id="vehicle2" class="vehicle-select">
+                        <option value="">Choisissez un véhicule</option>
+                    </select>
+                    <div id="vehicle2-details" class="vehicle-details"></div>
+                </div>
+            </div>
+
+            <button id="compareButton" class="cta-button" disabled>Comparer les véhicules</button>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 VroomIQ - Comparateur intelligent de véhicules</p>
+    </footer>
+</body>
+</html> 
