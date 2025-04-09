@@ -1,0 +1,27 @@
+name: Firebase Hosting CI/CD
+
+on:
+  push:
+    branches:
+      - main  # Déclenche le déploiement à chaque push sur la branche 'main'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2  # Récupère ton code depuis GitHub
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'  # Spécifie la version de Node.js
+
+      - name: Install dependencies
+        run: npm install -g firebase-tools  # Installe Firebase CLI
+
+      - name: Deploy to Firebase Hosting
+        run: firebase deploy --token ${{ secrets.FIREBASE_TOKEN }}  # Déploie sur Firebase
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}  # Utilise un secret GitHub pour le token Firebase
